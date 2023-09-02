@@ -1,14 +1,14 @@
 import random
-import os.path
 import logging
 import help
+
+from domain import domain
 
 logging.getLogger().setLevel(logging.DEBUG)
 logger = logging.getLogger('main')
 
 random.seed()
-g_index = 0
-LEVEL_SIZE = 10     # phrases on each level
+
 
 class State:
     def __init__(self, session, user_session):
@@ -22,6 +22,7 @@ class State:
 
     def to_output(self):
         return {'lett': self.lett, 'level': self.level, 'pos': self.pos, 'used_phrases': self.used_phrases, 'last_utterance': self.last_utterance}, {'intro_said': self.intro_said}
+
 
 class Request:
     def __init__(self, req):
@@ -40,65 +41,35 @@ class Request:
             return None
         return el['slots']['letter']['value']
 
+
 class AppException(Exception):
     def __init__(self, message):
         self.message = message
 
 
-def next_level_intro(level):
-    assert level > 1
-    return 'теперь по %d слов%s. ' % (level, '' if level >= 5 else 'а')
-
-def select_phrase(all_phrases, used_phrases):
-    if len(used_phrases) >= len(all_phrases):
-        return None
-    for n in range(1,10):
-        i = random.randint(0,len(all_phrases)-1)
-        ph = all_phrases[i]
-        if ph not in used_phrases:
-            phrase = ph
-            used_phrases.append(ph)
-            return ph
-    for ph in all_phrases:
-        if ph not in used_phrases:
-            phrase = ph
-            used_phrases.append(ph)
-            return ph
-    raise AppException("не могу выбрать следующую фразу")
-
-def read_level_phrases(state):
-    lett_short = state.lett[5:]
-    fname = 'phrase_%s_%d.txt' % (lett_short, state.level)
-    if not os.path.isfile(fname):
-        return None
-    try:
-        f = open(fname)
-    except:
-        raise AppException('не могу открыть список фраз. файл ' + fname)
-    return f.read().splitlines()
-
-
 # pos starts from 1
 def get_next_phrase(state):
-    global LEVEL_SIZE       # each level span on [1, LEVEL_SIZE]
-    appender = ''
+    level_factory = domain.LevelFactory()
+    level = level_factory.create(state.lett, state.level)
     state.pos += 1
-    level_phrases = read_level_phrases(state)
-    if (not level_phrases):
+    if level == domain.LEVEL_NONE:
         on_start(state)
-        return "я пока не готова учить этой букве. попробуйте другую." if state.level == 1 else "слова кончинись. попробуйте другую букву."
-    if state.pos > len(level_phrases) or state.pos > LEVEL_SIZE:
+        return "я пока не готова учить этой букве. попробуйте другую."
+    if level == domain.LEVEL_BEYOND_END:
+        on_start(state)
+        return "мы закончили с этой буквой. можно начать с начала."
+
+    level_instance_factory = domain.LevelInstanceFactory()
+    level_instance = level_instance_factory.create(level, state.used_phrases)
+    challenge = level_instance.next_phrase()
+
+    if challenge is None:
         # level up
-        if state.level >= 4:
-            on_start(state)
-            return "мы закончили с этой буквой. можно начать с начала."
         state.level += 1
         state.pos = 1
         state.used_phrases = []
-        appender = next_level_intro(state.level)
-        level_phrases = read_level_phrases(state)
-    ph = select_phrase(level_phrases, state.used_phrases)
-    return appender + ph
+        challenge = get_next_phrase(state)
+    return challenge
 
 
 def on_start(state):     # go to s_empty
@@ -112,6 +83,7 @@ def on_start(state):     # go to s_empty
         text = help.get_introduction() + ' ' + text
     return text
 
+
 def on_empty(req, state):     # go to s_letter / s_empty
     assert not state.lett
     assert state.level == 0
@@ -122,8 +94,9 @@ def on_empty(req, state):     # go to s_letter / s_empty
         ph = get_next_phrase(state)
         text = 'повторяйте за мной. ' + ph
     else:
-        text = 'Выберете букву. Сэ, жэ, эр.'
+        text = 'Выберете букву. Сэ, эр, эл, ч'
     return text
+
 
 def on_letter(req, state):
     assert state.level > 0
