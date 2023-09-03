@@ -50,7 +50,12 @@ class AppException(Exception):
 # pos starts from 1
 def get_next_phrase(state):
     level_factory = domain.LevelFactory()
-    level = level_factory.create(state.lett, state.level)
+    lett = domain.letter_by_string(state.lett)
+    if not lett:
+        on_start(state)
+        return "я пока не готова учить этой букве. попробуйте другую."
+
+    level = level_factory.create(lett, state.level)
     state.pos += 1
     if level == domain.LEVEL_NONE:
         on_start(state)

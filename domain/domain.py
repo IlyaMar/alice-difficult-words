@@ -17,6 +17,10 @@ class Letter(Enum):
     ZH = 5
 
 
+def letter_by_string(lett):
+    return Letter[lett.upper()]
+
+
 class Level:
     def __init__(self, number, description, phrases, max_phrases):
         assert number > 0
@@ -97,8 +101,8 @@ class LevelFactory:
             global LEVEL_BEYOND_END
             return LEVEL_BEYOND_END
         assert len(lines) > 1
-        descr = lines[0]
-        max_challenges = int(lines[1])
+        max_challenges = int(lines[0])
+        descr = lines[1]
         challenges = lines[2:]
         return Level(level_number, descr, challenges, max_challenges)
 
