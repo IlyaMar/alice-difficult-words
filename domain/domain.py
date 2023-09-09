@@ -10,15 +10,22 @@ random.seed()
 
 
 class Letter(Enum):
-    L = 1
-    S = 2
-    R = 3
-    SH = 4
-    ZH = 5
+    LETT_L = 1
+    LETT_S = 2
+    LETT_R = 3
+    LETT_SH = 4
+    LETT_ZH = 5
+
+    def short_name(self):
+        return self.name[5:].lower()
 
 
+# return Letter instance or raise KeyError
 def letter_by_string(lett):
-    return Letter[lett.upper()]
+    try:
+        return Letter[lett.upper()]
+    except KeyError:
+        return None
 
 
 class Level:
@@ -43,7 +50,7 @@ class LevelInstance:
     def is_complete(self):
         return len(self.used_phrases) >= self.level.max_phrases
 
-    # next phrase. None - if cannot.
+    # next phrase. None - if level complete.
     def next_phrase(self):
         if self.is_complete():
             return None
@@ -84,7 +91,8 @@ class LevelFactory:
         self.res_adapter = resource_adapter.ArchiveResourceAdapter()    # adapter.ResourceAdapter
 
     def create(self, letter, level_number):
-        resource_meta = "challenge/sound/%s/meta.yaml" % letter.name.lower()
+        lett_short_name = letter.short_name()
+        resource_meta = "challenge/sound/%s/meta.yaml" % lett_short_name
         meta = self.res_adapter.read_yaml(resource_meta)
         if meta is None:
             global LEVEL_NONE
@@ -92,7 +100,7 @@ class LevelFactory:
         levels = meta['levels']
 
         if level_number <= levels:
-            resource = "challenge/sound/%s/phrase_%s_%d.txt" % (letter.name.lower(), letter.name.lower(), level_number)
+            resource = "challenge/sound/%s/phrase_%s_%d.txt" % (lett_short_name, lett_short_name, level_number)
         else:
             resource = "challenge/common/%d.txt" % (level_number - levels)
 

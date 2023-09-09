@@ -97,7 +97,7 @@ def on_empty(req, state):     # go to s_letter / s_empty
         state.lett = lett
         state.level = 1
         ph = get_next_phrase(state)
-        text = 'повторяйте за мной. ' + ph
+        text = 'Повторяйте за мной. ' + ph
     else:
         text = 'Выберете букву. Сэ, эр, эл, ч'
     return text

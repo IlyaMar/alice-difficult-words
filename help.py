@@ -2,7 +2,7 @@ import os
 
 
 def __read_file(name):
-    fname = 'resources/' + name
+    fname = 'resources/%s' % name
     if not os.path.isfile(fname):
         raise AppException('не найден файл ' + fname)
     try:
