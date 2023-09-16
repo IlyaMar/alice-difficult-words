@@ -55,8 +55,7 @@
     "session": {
       "lett": null,
       "level": 0,
-      "pos": 0,
-      "used_phrases": [],
+      "used_phrases": null,
       "last_utterance": "Выберете букву"
     },
     "user": {

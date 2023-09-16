@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "UTC",
+    "client_id": "ru.yandex.quasar.services/1.0 (yandex station; android 6.0.1)",
+    "interfaces": {
+      "payments": {},
+      "account_linking": {}
+    }
+  },
+  "session": {
+    "message_id": 12,
+    "session_id": "1e881e33-7830-4a53-82a6-5de3b60049b0",
+    "skill_id": "c8f8587c-08ac-4fca-9c0a-a3e58d272657",
+    "user": {
+      "user_id": "F58B031F1D46F66445B55E75A7EB67079C4798519C36910B47C5F4459AB6BF31"
+    },
+    "application": {
+      "application_id": "359DF3C6D1D28EA1EDD47488CB2F8F4152B3CF09B4C8C2C257F55CE08EF71058"
+    },
+    "user_id": "359DF3C6D1D28EA1EDD47488CB2F8F4152B3CF09B4C8C2C257F55CE08EF71058",
+    "new": false
+  },
+  "request": {
+    "command": "e",
+    "original_utterance": "e",
+    "nlu": {
+      "tokens": [
+        "e"
+      ],
+      "entities": [],
+      "intents": {}
+    },
+    "markup": {
+      "dangerous_context": false
+    },
+    "type": "SimpleUtterance"
+  },
+  "state": {
+    "session": {
+      "lett": "lett_l",
+      "level": 1,
+      "used_phrases": [
+        "полный",
+        "колонка",
+        "бутылка",
+        "бокал",
+        "тулуп",
+        "локоть",
+        "лошадь",
+        "металл",
+        "стекло",
+        "смеялся"
+      ],
+      "last_utterance": "смеялся"
+    },
+    "user": {
+      "intro_said": true
+    },
+    "application": {}
+  },
+  "version": "1.0"
+}

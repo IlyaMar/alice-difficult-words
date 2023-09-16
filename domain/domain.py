@@ -37,8 +37,10 @@ class Level:
         self.phrases = phrases              # level will give phrases from this collection
         self.max_phrases = max_phrases      # level completes on this number of phrases
 
+
 LEVEL_NONE = Level(1, None, None, 1)
 LEVEL_BEYOND_END = Level(1, None, None, 1)
+
 
 class LevelInstance:
     def __init__(self, level, used_phrases):
@@ -48,7 +50,7 @@ class LevelInstance:
         self.used_phrases = used_phrases    # phrases already given to user
 
     def is_complete(self):
-        return len(self.used_phrases) >= self.level.max_phrases
+        return len(self.used_phrases) >= min(self.level.max_phrases, len(self.level.phrases))
 
     # next phrase. None - if level complete.
     def next_phrase(self):
@@ -92,8 +94,8 @@ class LevelFactory:
 
     def create(self, letter, level_number):
         lett_short_name = letter.short_name()
-        resource_meta = "challenge/sound/%s/meta.yaml" % lett_short_name
-        meta = self.res_adapter.read_yaml(resource_meta)
+        resource_meta = "challenge/sound/%s/meta.json" % lett_short_name
+        meta = self.res_adapter.read_json(resource_meta)
         if meta is None:
             global LEVEL_NONE
             return LEVEL_NONE
@@ -108,12 +110,11 @@ class LevelFactory:
         if lines is None:
             global LEVEL_BEYOND_END
             return LEVEL_BEYOND_END
-        assert len(lines) > 1
+        assert len(lines) > 2
         max_challenges = int(lines[0])
         descr = lines[1]
         challenges = lines[2:]
         return Level(level_number, descr, challenges, max_challenges)
-
 
 
 class LevelInstanceFactory:

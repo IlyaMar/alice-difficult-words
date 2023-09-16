@@ -1,5 +1,6 @@
 import os
-import yaml
+# import yaml
+import json
 
 # read resource as string array
 class ResourceAdapter:
@@ -31,14 +32,29 @@ class ArchiveResourceAdapter(ResourceAdapter):
             raise AdapterException('cannot open resource ' + fname + " " + e)
         return f.read().splitlines()
 
-    def read_yaml(self, resource):
+    # def read_yaml(self, resource):
+    #     fname = "resources/%s" % resource
+    #     if not os.path.isfile(fname):
+    #         return None
+    #     with open(fname, "r") as stream:
+    #         try:
+    #             out = yaml.safe_load(stream)
+    #             assert out
+    #             return out
+    #         except yaml.YAMLError as exc:
+    #             raise AdapterException('cannot parse yaml ' + fname + " " + exc)
+
+
+    def read_json(self, resource):
         fname = "resources/%s" % resource
         if not os.path.isfile(fname):
             return None
         with open(fname, "r") as stream:
             try:
-                out = yaml.safe_load(stream)
+                out = json.load(stream)
                 assert out
                 return out
-            except yaml.YAMLError as exc:
-                raise AdapterException('cannot parse yaml ' + fname + " " + exc)
+            except Exception as e:
+                raise AdapterException('cannot parse json ' + fname + " " + e)
+
+

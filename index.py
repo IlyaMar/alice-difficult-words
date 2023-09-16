@@ -14,14 +14,13 @@ class State:
     def __init__(self, session, user_session):
         self.lett = session.get('lett', None)
         self.level = int(session.get('level', '0'))
-        self.pos = int(session.get('pos', '0'))      # position inside level
         self.used_phrases = session.get('used_phrases', None)
         self.last_utterance = session.get('last_utterance', None)
         # long-term state
         self.intro_said = user_session.get('intro_said', False)
 
     def to_output(self):
-        return {'lett': self.lett, 'level': self.level, 'pos': self.pos, 'used_phrases': self.used_phrases, 'last_utterance': self.last_utterance}, {'intro_said': self.intro_said}
+        return {'lett': self.lett, 'level': self.level, 'used_phrases': self.used_phrases, 'last_utterance': self.last_utterance}, {'intro_said': self.intro_said}
 
 
 class Request:
@@ -47,7 +46,6 @@ class AppException(Exception):
         self.message = message
 
 
-# pos starts from 1
 def get_next_phrase(state):
     level_factory = domain.LevelFactory()
     lett = domain.letter_by_string(state.lett)
@@ -56,7 +54,6 @@ def get_next_phrase(state):
         return "я пока не готова учить этой букве. попробуйте другую."
 
     level = level_factory.create(lett, state.level)
-    state.pos += 1
     if level == domain.LEVEL_NONE:
         on_start(state)
         return "я пока не готова учить этой букве. попробуйте другую."
@@ -71,7 +68,6 @@ def get_next_phrase(state):
     if challenge is None:
         # level up
         state.level += 1
-        state.pos = 1
         state.used_phrases = []
         challenge = get_next_phrase(state)
     return challenge
@@ -80,7 +76,6 @@ def get_next_phrase(state):
 def on_start(state):     # go to s_empty
     state.lett = None
     state.level = 0
-    state.pos = 0
     state.used_phrases = []
     text = 'Выберете букву'
     if not state.intro_said:
@@ -96,6 +91,7 @@ def on_empty(req, state):     # go to s_letter / s_empty
     if lett:
         state.lett = lett
         state.level = 1
+        state.used_phrases = []
         ph = get_next_phrase(state)
         text = 'Повторяйте за мной. ' + ph
     else:
