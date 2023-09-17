@@ -1,10 +1,15 @@
 import index
-
+import pytest
 import json
 
 # def test_get_phrase():
 #     s = index.State()
 #     index.get_next_phrase(s)
+
+
+@pytest.fixture(autouse=True)
+def run_before_and_after_tests(tmpdir):
+    index.init("test_data/resources")
 
 
 def read_data(name):

@@ -7,6 +7,8 @@ from domain import domain
 logging.getLogger().setLevel(logging.DEBUG)
 logger = logging.getLogger('main')
 
+g_level_factory = None
+
 random.seed()
 
 
@@ -47,13 +49,13 @@ class AppException(Exception):
 
 
 def get_next_phrase(state):
-    level_factory = domain.LevelFactory()
+    global g_level_factory
     lett = domain.letter_by_string(state.lett)
     if not lett:
         on_start(state)
         return "я пока не готова учить этой букве. попробуйте другую."
 
-    level = level_factory.create(lett, state.level)
+    level = g_level_factory.create(lett, state.level)
     if level == domain.LEVEL_NONE:
         on_start(state)
         return "я пока не готова учить этой букве. попробуйте другую."
@@ -112,10 +114,11 @@ def handler(event, context):
     :param context: information about current execution context.
     :return: response to be serialized as JSON.
     """
+    init("resources")
+
     orig_utt = event['request'].get('original_utterance', None)
     state = State(event['state']['session'], event['state']['user'])
     req = Request(event['request'])
-
     logger.debug("Input state %s", state)
 
     try:
@@ -145,3 +148,8 @@ def handler(event, context):
         "session_state": state_ret,
         "user_state_update": user_state_ret
     }
+
+
+def init(resources_path):
+    global g_level_factory
+    g_level_factory = domain.LevelFactory(resources_path)

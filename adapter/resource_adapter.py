@@ -2,16 +2,18 @@ import os
 # import yaml
 import json
 
+
 # read resource as string array
 class ResourceAdapter:
     def __init__(self):
         pass
-    # read as string[]
+
     def read(self, resource):
         raise Exception("not implemented")
 
     def read_yaml(self, resource):
         raise Exception("not implemented")
+
 
 class AdapterException(Exception):
     def __init__(self, message):
@@ -19,11 +21,14 @@ class AdapterException(Exception):
 
 
 class ArchiveResourceAdapter(ResourceAdapter):
-    def __init__(self):
-        pass
+    def __init__(self, resources_path):
+        self.resources_path = resources_path
+
+    def __get_file_name(self, resource):
+        return "%s/%s" % (self.resources_path, resource)
 
     def read(self, resource):
-        fname = "resources/%s" % resource
+        fname = self.__get_file_name(resource)
         if not os.path.isfile(fname):
             return None
         try:
@@ -46,7 +51,7 @@ class ArchiveResourceAdapter(ResourceAdapter):
 
 
     def read_json(self, resource):
-        fname = "resources/%s" % resource
+        fname = self.__get_file_name(resource)
         if not os.path.isfile(fname):
             return None
         with open(fname, "r") as stream:

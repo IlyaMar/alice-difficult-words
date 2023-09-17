@@ -83,14 +83,14 @@ class Path:
 
 class Session:
     def __init__(self, letter, level, used_phrases):
-        self.letter =  letter     # Letter
+        self.letter = letter     # Letter
         self.level = level
 
 
 # loads level from resources
 class LevelFactory:
-    def __init__(self):
-        self.res_adapter = resource_adapter.ArchiveResourceAdapter()    # adapter.ResourceAdapter
+    def __init__(self, resources_path):
+        self.res_adapter = resource_adapter.ArchiveResourceAdapter(resources_path)    # adapter.ResourceAdapter
 
     def create(self, letter, level_number):
         lett_short_name = letter.short_name()
