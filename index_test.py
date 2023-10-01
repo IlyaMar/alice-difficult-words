@@ -26,7 +26,7 @@ def test_dialog_0():
 
 
 def test_dialog_1():
-    req = read_data("step1_select_letter/req")
+    req = read_data("step1_select_letter0/req")
     resp = index.handler(req, None)
     assert resp["response"]["text"].lower().startswith("повторяйте за мной. сначала по одному слову. ")
     ss = resp["session_state"]
@@ -36,7 +36,7 @@ def test_dialog_1():
 
 
 def test_dialog_2():
-    req = read_data("step2_reply_on_challenge1/req")
+    req = read_data("step2_reply_on_challenge1")
     resp = index.handler(req, None)
     assert resp["response"]["text"]
     ss = resp["session_state"]
@@ -46,7 +46,7 @@ def test_dialog_2():
 
 
 def test_dialog_3():
-    req = read_data("stepN_reply_on_challenge_last_in_level/req")
+    req = read_data("stepN_reply_on_challenge_last_in_level")
     resp = index.handler(req, None)
     assert resp["response"]["text"]
     ss = resp["session_state"]
@@ -58,8 +58,18 @@ def test_dialog_3():
 def test_dialog_4():
     req = read_data("step_reply_on_challenge_last_in_level2")
     resp = index.handler(req, None)
-    assert resp["response"]["text"]
+    assert resp["response"]["text"].startswith("теперь скороговорки")
     ss = resp["session_state"]
     assert ss["lett"] == "lett_l"
     assert ss["level"] == 3
     assert len(ss["used_phrases"]) == 1
+
+
+def test_dialog_5_complete_letter():
+    req = read_data("step_reply_on_challenge_last_in_level3")
+    resp = index.handler(req, None)
+    assert resp["response"]["text"] == "мы закончили с этой буквой. можно начать с начала."
+    ss = resp["session_state"]
+    assert ss["lett"] is None
+    assert ss["level"] == 0
+    assert len(ss["used_phrases"]) == 0

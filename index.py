@@ -114,7 +114,6 @@ def handler(event, context):
     :param context: information about current execution context.
     :return: response to be serialized as JSON.
     """
-    init("resources")
 
     orig_utt = event['request'].get('original_utterance', None)
     state = State(event['state']['session'], event['state']['user'])
@@ -153,3 +152,6 @@ def handler(event, context):
 def init(resources_path):
     global g_level_factory
     g_level_factory = domain.LevelFactory(resources_path)
+
+
+init("resources")
