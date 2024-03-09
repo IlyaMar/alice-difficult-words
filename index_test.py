@@ -26,7 +26,7 @@ def test_dialog_0():
 
 
 def test_dialog_1():
-    req = read_data("step1_select_letter0/req")
+    req = read_data("step1_select_letter")
     resp = index.handler(req, None)
     assert resp["response"]["text"].lower().startswith("повторяйте за мной. сначала по одному слову. ")
     ss = resp["session_state"]
