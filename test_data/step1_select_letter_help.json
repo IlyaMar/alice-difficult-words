@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "UTC",
+    "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+    "interfaces": {
+      "screen": {},
+      "payments": {},
+      "account_linking": {}
+    }
+  },
+  "session": {
+    "message_id": 1,
+    "session_id": "2ee8d967-ffa6-4e5e-9ea1-ffc97b3d027b",
+    "skill_id": "c8f8587c-08ac-4fca-9c0a-a3e58d272657",
+    "user": {
+      "user_id": "F58B031F1D46F66445B55E75A7EB67079C4798519C36910B47C5F4459AB6BF31"
+    },
+    "application": {
+      "application_id": "359DF3C6D1D28EA1EDD47488CB2F8F4152B3CF09B4C8C2C257F55CE08EF71058"
+    },
+    "user_id": "359DF3C6D1D28EA1EDD47488CB2F8F4152B3CF09B4C8C2C257F55CE08EF71058",
+    "new": false
+  },
+  "request": {
+    "command": "помоги",
+    "original_utterance": "помоги",
+    "nlu": {
+      "tokens": [
+        "помоги"
+      ],
+      "entities": [],
+      "intents": {
+        "YANDEX.HELP": {
+          "slots": {}
+        }
+      }
+    },
+    "markup": {
+      "dangerous_context": false
+    },
+    "type": "SimpleUtterance"
+  },
+  "state": {
+    "session": {
+      "lett": null,
+      "level": 0,
+      "used_phrases": [],
+      "last_utterance": "Выберете букву"
+    },
+    "user": {
+      "intro_said": true
+    },
+    "application": {}
+  },
+  "version": "1.0"
+}

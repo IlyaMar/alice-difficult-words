@@ -16,10 +16,10 @@ class State:
     def __init__(self, session, user_session):
         self.lett = session.get('lett', None)
         self.level = int(session.get('level', '0'))
-        self.used_phrases = session.get('used_phrases', None)
+        self.used_phrases = session.get('used_phrases', None)   # int[]
         self.last_utterance = session.get('last_utterance', None)
         # long-term state
-        self.intro_said = user_session.get('intro_said', False)
+        self.intro_said = user_session.get('intro_said', False) # bool
 
     def to_output(self):
         return {'lett': self.lett, 'level': self.level, 'used_phrases': self.used_phrases, 'last_utterance': self.last_utterance}, {'intro_said': self.intro_said}
@@ -33,8 +33,17 @@ class Request:
     def is_intent_repeat(self):
         return self.intents.get('YANDEX.REPEAT', None) is not None
 
+    def is_intent_help(self):
+        return self.intents.get('YANDEX.HELP', None) is not None
+
     def is_intent_restart(self):
         return self.intents.get('restart', None) is not None
+
+    def get_intent_level_delta(self):
+        intent = self.intents.get('change_level', None)
+        if not intent:
+            return None
+        return intent['slots']['level_delta']['value']
 
     def get_intent_letter(self):
         el = self.intents.get('exercise_letter', None)
@@ -97,13 +106,21 @@ def on_empty(req, state):     # go to s_letter / s_empty
         ph = get_next_phrase(state)
         text = 'Повторяйте за мной. ' + ph
     else:
-        text = 'Выберете букву. Сэ, эр, эл, ч'
+        text = 'Выберете букву, одну из эл, эс, эр, ш, ж'
     return text
 
 
+# here we can have intent "change_level" in request
 def on_letter(req, state):
     assert state.level > 0
     assert state.lett
+    level_delta = req.get_intent_level_delta()
+    if level_delta:
+        if level_delta == "level_up":
+            state.level += 1
+        elif state.level >= 2:
+            state.level -= 1
+        state.used_phrases = []
     return get_next_phrase(state)      # used_phrases modified
 
 
@@ -125,6 +142,8 @@ def handler(event, context):
             text = on_start(state)
         elif req.is_intent_repeat():
             text = state.last_utterance
+        elif req.is_intent_help():
+            text = help.get_help(state.lett)
         elif not state.lett:
             text = on_empty(req, state)
         else:

@@ -1,5 +1,7 @@
 import os
 
+from domain import domain
+
 
 def __read_file(name):
     fname = 'resources/%s' % name
@@ -16,5 +18,12 @@ def get_introduction():
     return __read_file('introduction.txt')
 
 
-def get_help(state_description):
-    return __read_file('help.txt') % state_description
+def get_help(letter):
+    if letter:
+        # letter in form "lett_s"
+        let = domain.Letter[letter.upper()]
+        return __read_file('help_letter.txt') % let.get_transcription()
+    else:
+        return __read_file('help_start.txt')
+
+

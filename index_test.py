@@ -34,6 +34,12 @@ def test_dialog_1():
     assert ss["level"] == 1
     assert len(ss["used_phrases"]) == 1
 
+def test_dialog_1_help():
+    req = read_data("step1_select_letter_help")
+    resp = index.handler(req, None)
+    assert resp["response"]["text"].lower().startswith("сейчас мы на старте")
+    ss = resp["session_state"]
+    assert ss["lett"] is None
 
 def test_dialog_2():
     req = read_data("step2_reply_on_challenge1")
@@ -44,6 +50,22 @@ def test_dialog_2():
     assert ss["level"] == 1
     assert len(ss["used_phrases"]) == 2
 
+def test_dialog_2_help():
+    req = read_data("step2_reply_on_challenge1_help")
+    resp = index.handler(req, None)
+    assert resp["response"]["text"].startswith("Сейчас мы повторяем фразы с буквой")
+    ss = resp["session_state"]
+    assert ss["lett"] == "lett_s"
+    assert ss["level"] == 1
+
+def test_dialog_2_change_level():
+    req = read_data("step2_reply_on_challenge1_change_level")
+    resp = index.handler(req, None)
+    assert resp["response"]["text"]
+    ss = resp["session_state"]
+    assert ss["lett"] == "lett_l"
+    assert ss["level"] == 2
+    assert len(ss["used_phrases"]) == 1
 
 def test_dialog_3():
     req = read_data("stepN_reply_on_challenge_last_in_level")

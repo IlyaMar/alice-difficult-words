@@ -10,14 +10,21 @@ random.seed()
 
 
 class Letter(Enum):
-    LETT_L = 1
-    LETT_S = 2
-    LETT_R = 3
-    LETT_SH = 4
-    LETT_ZH = 5
+    LETT_L = (1, 'эл')
+    LETT_S = (2, 'эс')
+    LETT_R = (3, 'эр')
+    LETT_SH = (4, 'ш')
+    LETT_ZH = (5, 'ж')
+
+    def __init__(self, num, transcription):
+        self.num = num
+        self.transcription = transcription
 
     def short_name(self):
         return self.name[5:].lower()
+
+    def get_transcription(self):
+        return self.transcription
 
 
 # return Letter instance or raise KeyError
@@ -60,9 +67,9 @@ class LevelInstance:
 
         for n in range(1, 100):      # try to find phrase randomly
             i = random.randint(0, len(self.level.phrases) - 1)
-            ph = self.level.phrases[i]
-            if ph not in self.used_phrases:
-                self.used_phrases.append(ph)
+            if i not in self.used_phrases:
+                self.used_phrases.append(i)
+                ph = self.level.phrases[i]
                 if is_first:
                     return self.level.description + ". " + ph
                 else:

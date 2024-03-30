@@ -17,3 +17,6 @@ E g levels for letter "P":
 - мягкий звук
 - фраза 4 слова
 - скороговорки: на дворе трава, на траве дрова
+
+# Dialog
+https://dialogs.yandex.ru/developer/skills/c8f8587c-08ac-4fca-9c0a-a3e58d272657
