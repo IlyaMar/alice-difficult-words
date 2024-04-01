@@ -3,9 +3,26 @@ import logging
 import help
 
 from domain import domain
+from pythonjsonlogger import jsonlogger
 
-logging.getLogger().setLevel(logging.DEBUG)
-logger = logging.getLogger('main')
+#logging.getLogger().setLevel(logging.DEBUG)
+#logger = logging.getLogger('main')
+
+
+class YcLoggingFormatter(jsonlogger.JsonFormatter):
+    def add_fields(self, log_record, record, message_dict):
+        super(YcLoggingFormatter, self).add_fields(log_record, record, message_dict)
+        log_record['logger'] = record.name
+        log_record['level'] = str.replace(str.replace(record.levelname, "WARNING", "WARN"), "CRITICAL", "FATAL")
+
+logHandler = logging.StreamHandler()
+logHandler.setFormatter(YcLoggingFormatter('%(message)s %(level)s %(logger)s'))
+
+logger = logging.getLogger('MyLogger')
+logger.propagate = False
+logger.addHandler(logHandler)
+logger.setLevel(logging.DEBUG)
+
 
 g_level_factory = None
 
@@ -27,6 +44,7 @@ class State:
 
 class Request:
     def __init__(self, req):
+        self.command = req.get('command', None)     # only one command: ping
         self.utterance = req.get('original_utterance', None)     # user's utterance
         self.intents = req.get('nlu', {}).get('intents',{})
 
@@ -125,16 +143,27 @@ def on_letter(req, state):
 
 
 def handler(event, context):
+    logger.info("input %s", event)
+    try:
+        ret = handlerImpl(event, context)
+        logger.info("done")
+        return ret
+    except Exception as e:
+        logger.exception(e)
+
+
+def handlerImpl(event, context):
     """
     Entry-point for Serverless Function.
     :param event: request payload.
     :param context: information about current execution context.
     :return: response to be serialized as JSON.
     """
-
+    req = Request(event['request'])
+    if req.command == 'ping':
+        return None
     orig_utt = event['request'].get('original_utterance', None)
     state = State(event['state']['session'], event['state']['user'])
-    req = Request(event['request'])
     logger.debug("Input state %s", state)
 
     try:
