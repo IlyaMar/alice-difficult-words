@@ -163,7 +163,9 @@ def handlerImpl(event, context):
     if req.command == 'ping':
         return None
     orig_utt = event['request'].get('original_utterance', None)
-    state = State(event['state']['session'], event['state']['user'])
+    # may be empty on first request
+    user_state = event['state'].get('user', {})
+    state = State(event['state']['session'], user_state)
     logger.debug("Input state %s", state)
 
     try:

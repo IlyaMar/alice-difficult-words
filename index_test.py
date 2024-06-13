@@ -25,6 +25,13 @@ def test_dialog_0():
     assert resp == resp1
 
 
+def test_dialog_0_new_user():
+    req = read_data("step0_begin_new_user/req")
+    resp1 = index.handler(req, None)
+    # other fields tested in test_dialog_0
+    assert resp1["user_state_update"] == {"intro_said": True}
+
+
 def test_dialog_1():
     req = read_data("step1_select_letter")
     resp = index.handler(req, None)
